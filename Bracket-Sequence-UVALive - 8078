@@ -1,0 +1,92 @@
+/* اللهم صلي وسلم وبارك علي سيدنا محمد */
+#include<bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace std;
+using namespace __gnu_pbds;
+#define all(x) begin(x), end(x)
+#define rall(x) rbegin(x), rend(x)
+#define ll long long
+#define lli long long int
+#define F first
+#define S second
+#define pb push_back
+#define endl "\n"
+#define debug(x) cout<<#x<<" = "<<x<<"\n"
+#define pi 3.142857143
+typedef complex<double> point;
+template<class T> using ordered_set = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_order_statistics_node_update>;
+
+ll gcd(ll a, ll b) { return !b ? a : gcd(b, a % b); }
+ll lcm(ll a, ll b) { return (a / gcd(a, b)) * b; }
+
+void setIO(string name = "")
+{
+    cin.tie(NULL);cout.tie(NULL);
+    ios_base::sync_with_stdio(false);
+#ifndef ONLINE_JUDGE
+    freopen((name + ".in").c_str(), "r", stdin);
+    freopen((name + ".out").c_str(), "w", stdout);
+#endif
+}
+
+/*-------------------------------------------*/
+enum dir    { d, r, u, l, ul, dr, ur, dl};
+int dx[8] = { 1, 0, -1, 0, -1, 1, -1, 1 };
+int dy[8] = { 0, 1, 0, -1, -1, 1, 1, -1 };
+/*-------------------------------------------*/
+ll power (ll b, ll p, ll mod)
+{
+    if(!p) return 1LL;
+    ll ret = power(b, p >> 1, mod);
+    ret *= ret;
+    ret %= mod;
+    if(p & 1LL)
+        ret = (ret * b) % mod;
+    return ret % mod;
+}
+// longest brackets sequence for each bracket
+// (<>)><
+// ans[st.top()] = i + 1;
+// ()()
+// 4020
+void solve()
+{
+    string s; cin >> s;
+    int n = (int)s.size();
+    map<char,int> mp = {{'(', 1}, {')', -1}, {'{', 2}, {'}', -2}, {'[', 3}, {']', -3}, {'<', 4}, {'>', -4}};
+    stack<pair<int, int>> st;
+    vector<int> ans(n + 9, 0);
+    for(int i = 0; i < n; i++)
+    {
+        int cur = mp[s[i]];
+        if(cur > 0) st.push({cur, i});
+        else
+        {
+            cur = -cur;
+            if(!st.empty() && st.top().F == cur)
+            {
+                ans[st.top().S] = i - st.top().S + 1;
+                st.pop();
+            }
+           else while (!st.empty()) st.pop();
+        }
+    }
+    ll cnt = 0;
+    for(int i = n - 1; ~i; i--)
+    {
+        ans[i] += ans[i + ans[i]];
+    }
+  for(int i = 0; i < n; i++)
+  cout << ans[i] << endl;
+}
+int main(){
+    setIO("c");
+    int T; cin >> T;
+    for(int i = 1; i <= T; i++)
+    {
+        cout << "Case " << i << ":" << endl;
+        solve();
+    }
+    return 0;
+}
